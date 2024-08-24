@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"core-customer/domain/entities"
+	"log/slog"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -14,7 +15,8 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) Create(user *entities.User) error {
-	_, err := r.db.NamedExec("INSERT INTO customers (id, name) VALUES (:id, :name)", user)
-	return err
+func (r *UserRepository) Create(user *entities.User) {
+	slog.Info("Creating user %v", user)
+	r.db.MustExec("INSERT INTO customer (id, name) VALUES ($1, $2)", user.Id, user.Name)
+	slog.Info("User created %v", user)
 }
