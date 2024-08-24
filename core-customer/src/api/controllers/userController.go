@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"core-customer/domain/entities"
 	"core-customer/domain/services"
 )
 
@@ -13,7 +12,6 @@ func NewUserController(userService services.UserService) UserController {
 	return UserController{userService}
 }
 
-func (u UserController) CreateUser(name string) entities.User {
-	newUser := u.userService.CreateUser(name)
-	return newUser
+func (u UserController) CreateUser(name string) {
+	u.userService.CreateUser(name)
 }

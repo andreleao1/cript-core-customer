@@ -3,8 +3,8 @@ package entities
 import "github.com/google/uuid"
 
 type User struct {
-	Id   uuid.UUID
-	Name string
+	Id   uuid.UUID `db:"id"`
+	Name string    `db:"name"`
 }
 
 func NewUser(name string) User {

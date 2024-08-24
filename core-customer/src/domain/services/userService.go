@@ -1,19 +1,19 @@
 package services
 
 import (
+	"core-customer/api/infra/repositories"
 	"core-customer/domain/entities"
-	"fmt"
 )
 
 type UserService struct {
+	userRepository repositories.UserRepository
 }
 
-func NewUserService() UserService {
-	return UserService{}
+func NewUserService(userRepository repositories.UserRepository) UserService {
+	return UserService{userRepository}
 }
 
-func (c *UserService) CreateUser(name string) entities.User {
+func (c *UserService) CreateUser(name string) {
 	userCreated := entities.NewUser(name)
-	fmt.Println("New user created: ", userCreated)
-	return userCreated
+	c.userRepository.Create(&userCreated)
 }
