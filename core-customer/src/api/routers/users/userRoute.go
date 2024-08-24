@@ -3,6 +3,7 @@ package usersRoute
 import (
 	"core-customer/api/controllers"
 	repositories "core-customer/api/infra/repositories/impl"
+	"core-customer/domain/entities"
 	"core-customer/domain/services"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +12,24 @@ import (
 
 func Init(c *gin.RouterGroup, db *sqlx.DB) {
 
-	c.GET("/usersa", func(c *gin.Context) { CreateUser(c, db) })
+	c.POST("/users", func(c *gin.Context) { CreateUser(c, db) })
 	c.GET("/users", GetUsers)
 }
 
 func CreateUser(c *gin.Context, db *sqlx.DB) {
+	var user entities.User
+
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Name is required",
+		})
+		return
+
+	}
+
 	userController := controllers.NewUserController(services.NewUserService(repositories.NewUserRepository(db)))
-	userController.CreateUser("John Doe")
+	userController.CreateUser(user.Name)
 	c.JSON(201, gin.H{
 		"message": "User created",
 	})
