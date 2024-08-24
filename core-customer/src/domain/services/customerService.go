@@ -4,6 +4,7 @@ import (
 	"core-customer/api/dto/in"
 	"core-customer/api/infra/repositories"
 	"core-customer/domain/entities"
+	"errors"
 	"log/slog"
 )
 
@@ -18,7 +19,14 @@ func NewcustomerService(customerRepository repositories.CustomerRepository) Cust
 func (c *CustomerService) CreateCustomer(customerIn in.CustomerInDTO) error {
 	slog.Info("Initiating customer creation", "", "")
 
-	customerCreated, err := entities.NewCustomer(customerIn.Name, customerIn.Email, customerIn.Password)
+	isValidTypedPassword := verifyTypedPassword(customerIn.TypedPassword, customerIn.ReTypedPassword)
+
+	if !isValidTypedPassword {
+		slog.Error("Typed password and re-typed password are different", "", "")
+		return errors.New("typed password and re-typed password are different")
+	}
+
+	customerCreated, err := entities.NewCustomer(customerIn.Name, customerIn.Email, customerIn.TypedPassword)
 
 	if err != nil {
 		slog.Error("Error to create customer: %v", err.Error(), "")
@@ -30,4 +38,8 @@ func (c *CustomerService) CreateCustomer(customerIn in.CustomerInDTO) error {
 	slog.Info("Customer created successfully id: %s", customerCreated.Id.String(), "")
 
 	return nil
+}
+
+func verifyTypedPassword(typedPassword, reTypedPassword string) bool {
+	return typedPassword == reTypedPassword
 }

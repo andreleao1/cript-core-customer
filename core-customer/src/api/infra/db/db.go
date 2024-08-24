@@ -15,12 +15,12 @@ func OpenConnection() *sqlx.DB {
 	connection, err := sqlx.Open("pgx", dbUrl)
 
 	if err != nil {
-		slog.Error("Error opening connection to database: %v", err)
+		slog.Error("Error opening connection to database: %v", err.Error(), "")
 		panic(err)
 	}
 
 	if err = connection.Ping(); err != nil {
-		slog.Error("Error pinging database: %v", err)
+		slog.Error("Error pinging database: %v", err.Error(), "")
 		panic(err)
 	}
 

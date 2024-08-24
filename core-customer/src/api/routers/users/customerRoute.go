@@ -12,8 +12,7 @@ import (
 
 func Init(c *gin.RouterGroup, db *sqlx.DB) {
 
-	c.POST("/customers", func(c *gin.Context) { CreateCustomer(c, db) })
-	c.GET("/users", GetCustomers)
+	c.POST("/customers/register", func(c *gin.Context) { CreateCustomer(c, db) })
 }
 
 func CreateCustomer(c *gin.Context, db *sqlx.DB) {
@@ -29,14 +28,17 @@ func CreateCustomer(c *gin.Context, db *sqlx.DB) {
 	}
 
 	customerController := controllers.NewCustomerController(services.NewcustomerService(repositories.NewCustomerRepository(db)))
-	customerController.CreateCustomer(customerIn)
+	err = customerController.CreateCustomer(customerIn)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+
+		return
+	}
+
 	c.JSON(201, gin.H{
 		"message": "Customer created",
-	})
-}
-
-func GetCustomers(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello from core-customer",
 	})
 }
