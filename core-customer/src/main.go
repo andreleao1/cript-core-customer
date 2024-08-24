@@ -1,20 +1,18 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"core-customer/api/routers"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 
 	router := gin.Default()
 	contextPath := router.Group("/core-customer")
 	{
-		contextPath.GET("/users", GetUsers)
+		routers.Init(contextPath)
 	}
 
-	router.Run()
-}
-
-func GetUsers(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello from core-customer",
-	})
+	router.Run(":9092")
 }
