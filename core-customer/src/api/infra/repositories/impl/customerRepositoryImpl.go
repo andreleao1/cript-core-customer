@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"core-customer/domain/entities"
 	"log/slog"
 
@@ -8,15 +9,15 @@ import (
 )
 
 type CustomerRepository struct {
-	db *sqlx.DB
+	Db sqlx.ExtContext
 }
 
-func NewCustomerRepository(db *sqlx.DB) *CustomerRepository {
-	return &CustomerRepository{db: db}
+func NewCustomerRepository(db sqlx.ExtContext) *CustomerRepository {
+	return &CustomerRepository{Db: db}
 }
 
-func (r *CustomerRepository) Create(customer *entities.Customer) {
-	r.db.MustExec("INSERT INTO customers (id, name, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
+func (r *CustomerRepository) Create(customer *entities.Customer) error {
+	_, err := r.Db.ExecContext(context.Background(), "INSERT INTO customers (id, name, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
 		customer.Id,
 		customer.Name,
 		customer.Email,
@@ -24,5 +25,11 @@ func (r *CustomerRepository) Create(customer *entities.Customer) {
 		customer.CreatedAt,
 		customer.UpdatedAt)
 
-	slog.Info("New customer created with id: %s", customer.Id.String(), "")
+	if err != nil {
+		slog.Error("Error creating customer: %v", err)
+		return err
+	}
+
+	slog.Info("New customer created with id: " + customer.Id.String())
+	return nil
 }

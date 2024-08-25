@@ -11,7 +11,6 @@ import (
 )
 
 func Init(c *gin.RouterGroup, db *sqlx.DB) {
-
 	c.POST("/customers/register", func(c *gin.Context) { CreateCustomer(c, db) })
 }
 

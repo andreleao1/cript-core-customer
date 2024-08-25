@@ -22,7 +22,7 @@ func main() {
 
 	driver, err := postgres.WithInstance(db.DB, &postgres.Config{})
 	if err != nil {
-		slog.Error("Error creating driver: %v", err)
+		slog.Error("Error creating driver.")
 		panic(err)
 	}
 
@@ -31,12 +31,12 @@ func main() {
 		"postgres", driver)
 
 	if err != nil {
-		slog.Error("Error creating migrations: %v", err)
+		slog.Error("Error creating migrations.")
 		panic(err)
 	}
 
 	if err := migrations.Up(); err != nil && err != migrate.ErrNoChange {
-		slog.Error("Error running migrations: %v", err)
+		slog.Error("Error running migrations.")
 		panic(err)
 	}
 
