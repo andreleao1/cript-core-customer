@@ -26,10 +26,51 @@ func (w *WalletRepository) CreateWallet(wallet entities.Wallet) error {
 		wallet.UpdatedAt)
 
 	if err != nil {
-		slog.Error("Error creating wallet: %v", err)
+		slog.Error("Error creating wallet.")
 		return err
 	}
 
-	slog.Info("New customer wallet with id: %s", wallet.Id.String(), "")
+	slog.Info("New customer wallet with id: " + wallet.Id.String())
 	return nil
+}
+
+func (w *WalletRepository) GetWalletByCustomerId(customerId string) (entities.Wallet, error) {
+	var wallet entities.Wallet
+	slog.Info("Executing query")
+
+	query := `
+	SELECT 
+		id,
+		customer_id, 
+		balance, 
+		balance_invested, 
+		created_at, 
+		updated_at 
+	FROM 
+		wallets 
+	WHERE 
+		customer_id = $1`
+
+	row := w.db.QueryRowxContext(
+		context.Background(),
+		query,
+		customerId)
+
+	err := row.Scan(
+		&wallet.Id,
+		&wallet.CustomerId,
+		&wallet.Balance,
+		&wallet.BalanceInvested,
+		&wallet.CreatedAt,
+		&wallet.UpdatedAt,
+	)
+
+	if err != nil {
+		slog.Error("Error getting wallet.")
+		return entities.Wallet{}, err
+	}
+
+	slog.Info("Query executed successfully")
+
+	return wallet, nil
 }
