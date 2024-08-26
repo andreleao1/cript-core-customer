@@ -8,11 +8,11 @@ import (
 
 type Wallet struct {
 	Id              uuid.UUID `json:"id"`
-	CustomerId      uuid.UUID `json:"customer_id"`
+	CustomerId      uuid.UUID `json:"customerId"`
 	Balance         string    `json:"balance"`
-	BalanceInvested string    `json:"balance_invested"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	BalanceInvested string    `json:"balanceInvested"`
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
 }
 
 func NewWallet(customerId uuid.UUID) Wallet {
