@@ -14,8 +14,13 @@ import (
 
 const basePath = "/reserves"
 
+const (
+	INTERNAL_SERVER_ERROR = "Internal server error, please try again. If the problem persists, contact support."
+)
+
 func Init(c *gin.RouterGroup, db *sqlx.DB) {
 	c.POST(basePath, func(c *gin.Context) { ReserveBalance(c, db) })
+	c.PATCH(basePath+"/effect/:id", func(c *gin.Context) { EffectReserve(c, db) })
 }
 
 func ReserveBalance(c *gin.Context, db *sqlx.DB) {
@@ -24,8 +29,9 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 	transaction, err := db.Beginx()
 
 	if err != nil {
+		slog.Error("Error starting transaction: " + err.Error())
 		c.JSON(500, gin.H{
-			"error": err.Error(),
+			"error": INTERNAL_SERVER_ERROR,
 		})
 		return
 	}
@@ -50,7 +56,7 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 		slog.Error("Error reserving balance, appling transaction rollback: " + err.Error())
 		transaction.Rollback()
 		c.JSON(500, gin.H{
-			"message": "Error reserving balance, please try again. If the problem persists, contact support.",
+			"message": INTERNAL_SERVER_ERROR,
 		})
 
 		return
@@ -60,5 +66,40 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 
 	c.JSON(201, gin.H{
 		"message": "Balance reserved successfully",
+	})
+}
+
+func EffectReserve(c *gin.Context, db *sqlx.DB) {
+	reserveId := c.Param("id")
+
+	transaction, err := db.Beginx()
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	balanceReserveRepository := repositories.NewBalanceReserveRepository(transaction)
+	balanceReserveService := services.NewBalanceReservationService(*balanceReserveRepository)
+	balanceReserveController := controllers.NewBalanceReserveController(balanceReserveService)
+
+	err = balanceReserveController.EffectReserve(reserveId)
+
+	if err != nil {
+		slog.Error("Error effecting reserve, appling transaction rollback: " + err.Error())
+		transaction.Rollback()
+		c.JSON(500, gin.H{
+			"message": INTERNAL_SERVER_ERROR,
+		})
+
+		return
+	}
+
+	transaction.Commit()
+
+	c.JSON(200, gin.H{
+		"message": "Reserve effected successfully",
 	})
 }

@@ -10,4 +10,6 @@ type WalletRepository interface {
 	ApplyExclusiveLock(walletId string) error
 	UpdateWalletBalance(walletId string, balance string) error
 	GetBalance(walletId string) (string, error)
+	GetBalanceInvested(walletId string) (string, error)
+	UpdateBalanceInvested(walletId string, balanceInvested string) error
 }

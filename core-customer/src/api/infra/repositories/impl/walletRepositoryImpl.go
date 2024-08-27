@@ -165,3 +165,65 @@ func (w *WalletRepository) GetBalance(walletId string) (string, error) {
 
 	return balance, nil
 }
+
+func (w *WalletRepository) GetBalanceInvested(walletId string) (string, error) {
+	var balanceInvested string
+	slog.Info("Getting invested balance from wallet with id: " + walletId)
+
+	query := `
+	SELECT 
+		balance_invested
+	FROM 
+		wallets 
+	WHERE 
+		id = $1`
+
+	row := w.db.QueryRowxContext(
+		context.Background(),
+		query,
+		walletId)
+
+	err := row.Scan(
+		&balanceInvested,
+	)
+
+	if err != nil {
+		slog.Error("Error getting wallet invested balance.")
+		return "", err
+	}
+
+	slog.Info("Query executed successfully")
+
+	return balanceInvested, nil
+}
+
+func (w *WalletRepository) UpdateBalanceInvested(walletId string, balanceInvested string) error {
+	slog.Info("Updating wallet invested balance with id: " + walletId)
+
+	query := `
+	UPDATE
+		wallets
+	SET
+		balance_invested = $1,
+		updated_at = now()
+	WHERE
+		id = $2
+
+	`
+
+	_, err := w.db.ExecContext(
+		context.Background(),
+		query,
+		balanceInvested,
+		walletId,
+	)
+
+	if err != nil {
+		slog.Error("Error updating wallet invested balance.")
+		return err
+	}
+
+	slog.Info("Wallet invested balance updated with id: " + walletId)
+
+	return nil
+}

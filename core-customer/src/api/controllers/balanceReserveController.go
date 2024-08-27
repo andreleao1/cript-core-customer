@@ -22,3 +22,13 @@ func (b *BalanceReserveController) ReserveBalance(reserve *entities.BalanceReser
 
 	return nil
 }
+
+func (b *BalanceReserveController) EffectReserve(reserveId string) error {
+	err := b.balanceReserveService.EffectReserve(reserveId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -43,3 +43,61 @@ func (r *BalanceReserveRepository) ReserveBalance(reserve *entities.BalanceReser
 
 	return nil
 }
+
+func (r *BalanceReserveRepository) EffectReserve(reserveId string) error {
+	slog.Info("Executing query to effect reserve.")
+	query :=
+		`UPDATE
+		balance_reserves
+	SET
+		status = $1
+	WHERE
+		id = $2`
+	_, err := r.Db.ExecContext(
+		context.Background(),
+		query,
+		entities.ReserveStatusDone,
+		reserveId,
+	)
+
+	if err != nil {
+		slog.Error("Error effecting balance reserve.")
+		return err
+	}
+
+	slog.Info("Balance reserve effected with id: " + reserveId)
+
+	return nil
+}
+
+func (r *BalanceReserveRepository) GetWalletIdAndReserveAmount(reserveId string) (string, string, error) {
+	var walletId string
+	var reserveAmount string
+	slog.Info("Executing query to get wallet id by reserve id.")
+
+	query := `
+	SELECT
+		wallet_id,
+		amount
+	FROM
+		balance_reserves
+	WHERE
+		id = $1`
+
+	row := r.Db.QueryRowxContext(
+		context.Background(),
+		query,
+		reserveId,
+	)
+
+	err := row.Scan(&walletId, &reserveAmount)
+
+	if err != nil {
+		slog.Error("Error getting wallet id by reserve id.")
+		return "", "", err
+	}
+
+	slog.Info("Wallet id by reserve id: " + walletId)
+
+	return walletId, reserveAmount, nil
+}
