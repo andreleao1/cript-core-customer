@@ -26,7 +26,7 @@ func (r *CustomerRepository) Create(customer *entities.Customer) error {
 		customer.UpdatedAt)
 
 	if err != nil {
-		slog.Error("Error creating customer: %v", err)
+		slog.Error("Error creating customer.")
 		return err
 	}
 
