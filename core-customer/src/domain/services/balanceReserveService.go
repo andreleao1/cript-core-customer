@@ -55,23 +55,26 @@ func (b *BalanceReserveService) ReserveBalance(reserve *entities.BalanceReserve)
 		return err
 	}
 
+	slog.Info("Reserve created with id " + reserve.Id.String())
+
 	return nil
 }
 
 func (b *BalanceReserveService) EffectReserve(reserveId string) error {
 	slog.Info("Initiating reserve effect to reserve " + reserveId)
-	walletRepository, err := applyExclusiveLockToWallet(b.BalanceReserveRepository.Db, reserveId)
+
+	walletId, reserveAmount, err := b.BalanceReserveRepository.GetWalletIdAndReserveAmount(reserveId)
+	if err != nil {
+		return err
+	}
+
+	walletRepository, err := applyExclusiveLockToWallet(b.BalanceReserveRepository.Db, walletId)
 	if err != nil {
 		return err
 	}
 
 	err = b.BalanceReserveRepository.EffectReserve(reserveId)
 
-	if err != nil {
-		return err
-	}
-
-	walletId, reserveAmount, err := b.BalanceReserveRepository.GetWalletIdAndReserveAmount(reserveId)
 	if err != nil {
 		return err
 	}
@@ -97,6 +100,53 @@ func (b *BalanceReserveService) EffectReserve(reserveId string) error {
 	if err != nil {
 		return err
 	}
+
+	slog.Info("Reserve " + reserveId + " effected successfuly.")
+
+	return nil
+}
+
+func (b *BalanceReserveService) CancelReserve(reserveId string) error {
+	slog.Info("Initiating reserve cancelation to reserve " + reserveId)
+
+	walletId, reserveAmount, err := b.BalanceReserveRepository.GetWalletIdAndReserveAmount(reserveId)
+	if err != nil {
+		return err
+	}
+
+	walletRepository, err := applyExclusiveLockToWallet(b.BalanceReserveRepository.Db, walletId)
+	if err != nil {
+		return err
+	}
+
+	err = b.BalanceReserveRepository.CancelReserve(reserveId)
+	if err != nil {
+		return err
+	}
+
+	currentBalance, err := walletRepository.GetBalance(walletId)
+	if err != nil {
+		return err
+	}
+
+	reserveAmountFloat, err := parseToFloat(reserveAmount)
+	if err != nil {
+		return err
+	}
+
+	currentBalanceFloat, err := parseToFloat(currentBalance)
+	if err != nil {
+		return err
+	}
+
+	newWalletBalance := currentBalanceFloat + reserveAmountFloat
+
+	err = walletRepository.UpdateBalance(walletId, strconv.FormatFloat(newWalletBalance, 'f', -1, 64))
+	if err != nil {
+		return err
+	}
+
+	slog.Info("Reserve %s effected canceled", reserveId, ".")
 
 	return nil
 }

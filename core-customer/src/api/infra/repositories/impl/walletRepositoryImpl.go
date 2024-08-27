@@ -70,7 +70,7 @@ func (w *WalletRepository) GetWalletByCustomerId(customerId string) (entities.Wa
 		return entities.Wallet{}, err
 	}
 
-	slog.Info("Query executed successfully")
+	slog.Info("Query executed successfully.")
 
 	return wallet, nil
 }

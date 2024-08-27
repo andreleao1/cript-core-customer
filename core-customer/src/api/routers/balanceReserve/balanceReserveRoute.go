@@ -21,6 +21,7 @@ const (
 func Init(c *gin.RouterGroup, db *sqlx.DB) {
 	c.POST(basePath, func(c *gin.Context) { ReserveBalance(c, db) })
 	c.PATCH(basePath+"/effect/:id", func(c *gin.Context) { EffectReserve(c, db) })
+	c.PATCH(basePath+"/cancel/:id", func(c *gin.Context) { CancelReserve(c, db) })
 }
 
 func ReserveBalance(c *gin.Context, db *sqlx.DB) {
@@ -101,5 +102,40 @@ func EffectReserve(c *gin.Context, db *sqlx.DB) {
 
 	c.JSON(200, gin.H{
 		"message": "Reserve effected successfully",
+	})
+}
+
+func CancelReserve(c *gin.Context, db *sqlx.DB) {
+	reserveId := c.Param("id")
+
+	transaction, err := db.Beginx()
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	balanceReserveRepository := repositories.NewBalanceReserveRepository(transaction)
+	balanceReserveService := services.NewBalanceReservationService(*balanceReserveRepository)
+	balanceReserveController := controllers.NewBalanceReserveController(balanceReserveService)
+
+	err = balanceReserveController.CancelReserve(reserveId)
+
+	if err != nil {
+		slog.Error("Error canceling reserve, appling transaction rollback: " + err.Error())
+		transaction.Rollback()
+		c.JSON(500, gin.H{
+			"message": INTERNAL_SERVER_ERROR,
+		})
+
+		return
+	}
+
+	transaction.Commit()
+
+	c.JSON(200, gin.H{
+		"message": "Reserve canceled successfully",
 	})
 }

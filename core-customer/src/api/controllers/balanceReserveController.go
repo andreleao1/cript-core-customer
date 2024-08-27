@@ -32,3 +32,13 @@ func (b *BalanceReserveController) EffectReserve(reserveId string) error {
 
 	return nil
 }
+
+func (b *BalanceReserveController) CancelReserve(reserveId string) error {
+	err := b.balanceReserveService.CancelReserve(reserveId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -10,9 +10,9 @@ import (
 type ReserveStatus string
 
 const (
-	ReserveStatusPending ReserveStatus = "PENDING"
-	ReserveStatusDone    ReserveStatus = "DONE"
-	ReserveStatusCancel  ReserveStatus = "CANCEL"
+	ReserveStatusPending  ReserveStatus = "PENDING"
+	ReserveStatusDone     ReserveStatus = "DONE"
+	ReserveStatusCanceled ReserveStatus = "CANCELED"
 )
 
 type BalanceReserve struct {

@@ -101,3 +101,29 @@ func (r *BalanceReserveRepository) GetWalletIdAndReserveAmount(reserveId string)
 
 	return walletId, reserveAmount, nil
 }
+
+func (r *BalanceReserveRepository) CancelReserve(reserveId string) error {
+	slog.Info("Executing query to cancel reserve.")
+	query :=
+		`UPDATE
+		balance_reserves
+	SET
+		status = $1
+	WHERE
+		id = $2`
+	_, err := r.Db.ExecContext(
+		context.Background(),
+		query,
+		entities.ReserveStatusCanceled,
+		reserveId,
+	)
+
+	if err != nil {
+		slog.Error("Error canceling balance reserve.")
+		return err
+	}
+
+	slog.Info("Balance reserve canceled with id: " + reserveId)
+
+	return nil
+}
