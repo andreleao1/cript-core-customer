@@ -7,7 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const dbUrl = "postgres://postgres:postgres@localhost:5432/core-customer?sslmode=disable"
+const dbUrl = "postgres://postgres:postgres@postgres:5432/core-customer?sslmode=disable"
 
 func OpenConnection() *sqlx.DB {
 	slog.Info("Opening connection to database")
@@ -15,12 +15,12 @@ func OpenConnection() *sqlx.DB {
 	connection, err := sqlx.Open("pgx", dbUrl)
 
 	if err != nil {
-		slog.Error("Error opening connection to database: %v", err.Error(), "")
+		slog.Error("Error opening connection to database.")
 		panic(err)
 	}
 
 	if err = connection.Ping(); err != nil {
-		slog.Error("Error pinging database: %v", err.Error(), "")
+		slog.Error("Error pinging database.")
 		panic(err)
 	}
 
