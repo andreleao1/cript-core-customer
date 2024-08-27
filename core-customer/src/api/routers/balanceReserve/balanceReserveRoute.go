@@ -6,6 +6,7 @@ import (
 	repositories "core-customer/api/infra/repositories/impl"
 	"core-customer/domain/entities"
 	"core-customer/domain/services"
+	"log/slog"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -46,8 +47,10 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 	err = balanceReserveController.ReserveBalance(&balanceReserve)
 
 	if err != nil {
+		slog.Error("Error reserving balance, appling transaction rollback: " + err.Error())
+		transaction.Rollback()
 		c.JSON(500, gin.H{
-			"message": err.Error(),
+			"message": "Error reserving balance, please try again. If the problem persists, contact support.",
 		})
 
 		return
