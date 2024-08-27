@@ -1,11 +1,11 @@
 package services
 
 import (
-	"core-customer/api/dto/in"
-	"core-customer/api/infra/db"
-	"core-customer/api/infra/repositories"
-	repositoriesImpl "core-customer/api/infra/repositories/impl"
-	"core-customer/domain/entities"
+	"core-customer/core-customer/src/api/dto/in"
+	"core-customer/core-customer/src/api/infra/db"
+	"core-customer/core-customer/src/api/infra/repositories"
+	repositoriesImpl "core-customer/core-customer/src/api/infra/repositories/impl"
+	"core-customer/core-customer/src/domain/entities"
 	"errors"
 	"log/slog"
 

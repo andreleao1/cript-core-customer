@@ -1,9 +1,9 @@
 package routers
 
 import (
-	balancerReserveRoute "core-customer/api/routers/balanceReserve"
-	customersRoute "core-customer/api/routers/users"
-	walletsRoute "core-customer/api/routers/wallets"
+	balancerReserveRoute "core-customer/core-customer/src/api/routers/balanceReserve"
+	customersRoute "core-customer/core-customer/src/api/routers/users"
+	walletsRoute "core-customer/core-customer/src/api/routers/wallets"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"

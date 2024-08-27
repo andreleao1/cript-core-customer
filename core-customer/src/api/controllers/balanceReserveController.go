@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"core-customer/domain/entities"
-	"core-customer/domain/services"
+	"core-customer/core-customer/src/domain/entities"
+	"core-customer/core-customer/src/domain/services"
 )
 
 type BalanceReserveController struct {

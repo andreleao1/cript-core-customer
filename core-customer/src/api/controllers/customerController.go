@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"core-customer/api/dto/in"
-	"core-customer/domain/services"
+	"core-customer/core-customer/src/api/dto/in"
+	"core-customer/core-customer/src/domain/services"
 )
 
 type CustomerController struct {

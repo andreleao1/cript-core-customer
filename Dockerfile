@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main core-customer/main.go
+RUN go build -o main core-customer/src/main.go
 
 FROM alpine:latest
 
