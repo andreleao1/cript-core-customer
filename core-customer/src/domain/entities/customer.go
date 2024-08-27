@@ -1,7 +1,7 @@
 package entities
 
 import (
-	passwordUtil "core-customer/utils/password"
+	passwordUtil "core-customer/core-customer/src/utils/password"
 	"log/slog"
 	"time"
 

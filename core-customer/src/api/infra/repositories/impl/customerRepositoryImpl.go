@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"core-customer/domain/entities"
+	"core-customer/core-customer/src/domain/entities"
 	"log/slog"
 
 	"github.com/jmoiron/sqlx"

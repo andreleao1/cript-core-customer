@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"core-customer/domain/entities"
+	"core-customer/core-customer/src/domain/entities"
 )
 
 type WalletRepository interface {

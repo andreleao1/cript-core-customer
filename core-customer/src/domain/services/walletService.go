@@ -1,8 +1,8 @@
 package services
 
 import (
-	repositories "core-customer/api/infra/repositories/impl"
-	"core-customer/domain/entities"
+	repositories "core-customer/core-customer/src/api/infra/repositories/impl"
+	"core-customer/core-customer/src/domain/entities"
 	"log/slog"
 )
 

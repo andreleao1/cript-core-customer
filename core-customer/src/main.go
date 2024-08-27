@@ -1,8 +1,8 @@
 package main
 
 import (
-	"core-customer/api/infra/db"
-	"core-customer/api/routers"
+	"core-customer/core-customer/src/api/infra/db"
+	"core-customer/core-customer/src/api/routers"
 	"log/slog"
 	"os"
 

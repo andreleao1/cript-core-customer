@@ -1,9 +1,9 @@
 package walletsRoute
 
 import (
-	"core-customer/api/controllers"
-	repositories "core-customer/api/infra/repositories/impl"
-	"core-customer/domain/services"
+	"core-customer/core-customer/src/api/controllers"
+	repositories "core-customer/core-customer/src/api/infra/repositories/impl"
+	"core-customer/core-customer/src/domain/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"

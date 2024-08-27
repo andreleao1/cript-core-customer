@@ -1,6 +1,6 @@
 package repositories
 
-import "core-customer/domain/entities"
+import "core-customer/core-customer/src/domain/entities"
 
 type BalanceReserveRepository interface {
 	ReserveBalance(reserva *entities.BalanceReserve) error
