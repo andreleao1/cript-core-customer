@@ -46,5 +46,5 @@ func main() {
 		routers.Init(contextPath, db)
 	}
 
-	router.Run(":9092")
+	router.Run(":9093")
 }
