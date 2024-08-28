@@ -17,34 +17,34 @@ func NewBalanceReservationService(balanceReserveRepository repositories.BalanceR
 	return BalanceReserveService{BalanceReserveRepository: balanceReserveRepository}
 }
 
-func (b *BalanceReserveService) ReserveBalance(reserve *entities.BalanceReserve) error {
+func (b *BalanceReserveService) ReserveBalance(reserve *entities.BalanceReserve) (string, error) {
 	slog.Info("Initiating balance reserve to wallet " + reserve.WalletId)
 	var currentBalanceFloat float64
 	var reservedBalanceFloat float64
 
 	walletRespository, err := applyExclusiveLockToWallet(b.BalanceReserveRepository.Db, reserve.WalletId)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	currentBalance, err := walletRespository.GetBalance(reserve.WalletId)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = b.BalanceReserveRepository.ReserveBalance(reserve)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	reservedBalanceFloat, err = parseToFloat(reserve.Amount)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	currentBalanceFloat, err = parseToFloat(currentBalance)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	newWalletBalance := currentBalanceFloat - reservedBalanceFloat
@@ -52,12 +52,12 @@ func (b *BalanceReserveService) ReserveBalance(reserve *entities.BalanceReserve)
 	err = walletRespository.UpdateBalance(reserve.WalletId, strconv.FormatFloat(newWalletBalance, 'f', -1, 64))
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	slog.Info("Reserve created with id " + reserve.Id.String())
 
-	return nil
+	return reserve.Id.String(), nil
 }
 
 func (b *BalanceReserveService) EffectReserve(reserveId string) error {
