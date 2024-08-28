@@ -13,14 +13,14 @@ func NewBalanceReserveController(balanceReserceService services.BalanceReserveSe
 	return BalanceReserveController{balanceReserceService}
 }
 
-func (b *BalanceReserveController) ReserveBalance(reserve *entities.BalanceReserve) error {
-	err := b.balanceReserveService.ReserveBalance(reserve)
+func (b *BalanceReserveController) ReserveBalance(reserve *entities.BalanceReserve) (string, error) {
+	reserveId, err := b.balanceReserveService.ReserveBalance(reserve)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return reserveId, nil
 }
 
 func (b *BalanceReserveController) EffectReserve(reserveId string) error {

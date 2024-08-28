@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-
 	customLog := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(customLog)
 

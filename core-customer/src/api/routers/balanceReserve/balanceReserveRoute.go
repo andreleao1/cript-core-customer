@@ -51,7 +51,7 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 	balanceReserveController := controllers.NewBalanceReserveController(balanceReserveService)
 
 	balanceReserve := entities.NewBalanceReserve(balanceReserveIn.WalletId, balanceReserveIn.Amount)
-	err = balanceReserveController.ReserveBalance(&balanceReserve)
+	reserveId, err := balanceReserveController.ReserveBalance(&balanceReserve)
 
 	if err != nil {
 		slog.Error("Error reserving balance, appling transaction rollback: " + err.Error())
@@ -66,7 +66,7 @@ func ReserveBalance(c *gin.Context, db *sqlx.DB) {
 	transaction.Commit()
 
 	c.JSON(201, gin.H{
-		"message": "Balance reserved successfully",
+		"reserveId": reserveId,
 	})
 }
 
